@@ -1,0 +1,7 @@
+{% extends "/admin/main.jinja" %}
+{% from "/users/formats.jinja" import new_form with context %}
+{% block content %}
+<div class="edit-form">
+{{ new_form(item, settings) }}
+</div>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends "/blog/main.jinja" %}
+{% from "/blog/macros.jinja" import button_to, form with context %}
+{% block content %}
+<div class="profile-form">
+<p>
+	Why would you want to register multiple logins?
+	<br/>
+	I really don't know.  Maybe you keep forgetting which service you registered up with so you want to cover your bases.
+	Thats the only reason for now though I hope to put in some of them fancy social features into the site at some point which might make it more useful.
+</p>
+{% if session['user_name'] == None %}
+{{ form(url('set_name_accounts'), method="post") }}
+	<label for="name">User Name</label>
+	<input type="text" name="name" id="name" /> <span id="name_status"></span>
+	<input type="submit" name="save" id="save" value="Set User Name" />
+</form>
+{% endif %}
+{% if session['user_openid']  == None %}
+{{ button_to("Link Account with Google", url('add_link_accounts',type='google')) }}
+{{ button_to("Link Account with Yahoo", url('add_link_accounts',type='yahoo')) }}
+{{ form(url('add_link_accounts',type='aol'), method="post") }}
+	<label for="extra">Screen Name</label>
+	<input type="text" name="extra" id="extra" class="inline" />
+	<input type="submit" name="save" id="save" class="inline" value="Link Account with AOL" />
+</form>
+{{ form(url('add_link_accounts',type='openid'), method="post") }}
+	<label for="extra">OpenID URL</label>
+	<input type="text" name="extra" id="extra" class="inline" />
+	<input type="submit" name="save" id="save" class="inline" value="Link Account with OpenID" />
+</form>
+{% elif (session['user_twitterid'] or session['user_fbid']) != None %}
+{{ button_to("Unlink OpenID Account", url('remove_link_accounts',type='openid')) }}
+{% endif %}
+{% if session['user_twitterid'] == None %}
+{{ button_to("Link Account with Twitter", url('add_link_accounts',type='twitter')) }}
+{% elif (session['user_openid'] or session['user_fbid']) != None %}
+{{ button_to("Unlink Twitter Account", url('remove_link_accounts',type='twitter')) }}
+{% endif %}
+{% if session['user_fbid'] == None %}
+{{ button_to("Link Account with Facebook", url('add_link_accounts',type='facebook')) }}
+{% elif (session['user_openid'] or session['user_twitterid']) != None %}
+{{ button_to("Unlink Facebook Account", url('remove_link_accounts',type='facebook')) }}
+{% endif %}
+{{ form(url('accounts'), method="put") }}
+	<label for="profile">Profile URL</label>
+	<input type="text" name="profile" id="profile" value="{{ session['user_profile'] }}" />
+	<input type="submit" name="save" id="save" value="Save" />
+</form>
+</div>
+{% endblock %}
+
+{% block jquery_code %}
+	{{ super() }}
+	$("#name").keyup(function(){
+		var current_name = jQuery.trim($("#name").val());
+		if(current_name.length > 3){
+			$.ajax({
+				type: "GET",
+				url:"{{ url(controller='accounts',action='check_unique_name') }}",
+				data: "name="+current_name,
+				beforeSend: function(){
+					$("#name_status").html("Checking Availability...");
+				},
+				success: function(data){
+					$("#name_status").html(data);
+				}
+			});
+		}
+		else{
+			$("#name_status").html("name must be 3 or more characters long");
+		}
+	});
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "/blog/main.jinja" %}
+{% from "/blog/macros.jinja" import show_article with context %}
+{% block content %}
+<div class="page-posts">
+	{% for post in item.articles %}
+	{{ show_article(post,summarize=True) }}
+	{% endfor %}
+</div>
+<div class="pagination">
+	{% if page_num > 1 %}
+	<a href="{{ url.current(p=[page_num-1,1]|maximum) }}" class="next_page">&lt;&lt;</a>
+	{% else %}
+	<span class="next_page">&lt;&lt;</span>
+	{% endif %}
+	<a href="{{ url.current(p=page_num + 1) }}" class="prev_page">&gt;&gt;</a>
+</div>
+{% endblock %}

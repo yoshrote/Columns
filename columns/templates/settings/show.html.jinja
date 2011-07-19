@@ -1,0 +1,10 @@
+{% extends "/admin/main.jinja" %}
+{% block content %}
+<div class="settings-show">
+<h2>{{ item.module }} Settings</h2>
+<table>
+	{% for k,v in item.values.items() %}
+	<tr><td>{{ k }}</td><td>{{ v }}</td></tr>
+	{% endfor %}
+</table>
+{% endblock %}

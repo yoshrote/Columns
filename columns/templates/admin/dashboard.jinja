@@ -1,0 +1,23 @@
+{% extends "/admin/main.jinja" %}
+{% block content %}
+<div class="admin-dashboard">
+	<p><strong>To chop an article so it shows a summary on the main page, add a horizontal rule (&lt;hr /&gt;) to show where to split the article. You can find the icon for added one in the editor on the bottom row 2nd from the right.</strong></p>
+	<p>We should put widgets and stuff that give us info of what is going on here.</p>
+	<div>
+		<table>
+			<tr>
+				<td>Articles</td><td>{{ h.resource_counter('articles') }}</td>
+			</tr>
+			<tr>
+				<td>Comments</td><td>{{ h.resource_counter('comments') }}</td>
+			</tr>
+			<tr>
+				<td>Pages</td><td>{{ h.resource_counter('pages') }}</td>
+			</tr>
+			<tr>
+				<td>Uploads</td><td>{{ h.resource_counter('pictures') }}</td>
+			</tr>
+		</table>
+	</div>
+</div>
+{% endblock %}

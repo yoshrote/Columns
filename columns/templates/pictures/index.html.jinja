@@ -1,0 +1,10 @@
+{% extends "/admin/main.jinja" %}
+{% from "/admin/common.jinja" import pagination, link_if_allowed with context %}
+{% from "/pictures/formats.jinja" import index_html with context %}
+{% block content %}
+<div class="admin-list">
+{{ link_if_allowed("Create New",url('new_picture'), class="new-link") }}
+{{ index_html(items, settings) }}
+{{ pagination(page_num) }}
+</div>
+{% endblock %}

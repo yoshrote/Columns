@@ -1,0 +1,44 @@
+{% extends "/blog/main.jinja" %}
+{% from "/blog/macros.jinja" import form with context %}
+{% block content %}
+<div class="quick-create">
+	<p>Your user name will be used to identify you as the author of your posts and comments.  Your actual name and login account will not be shown.</p>
+	<p>Your profile url - if you choose to have one - will cause your comments to link to the given url.</p>
+{{ form(url('new_account'), method="post") }}
+<p>
+	<label for="name">User Name</label>
+	<input type="text" name="name" id="name" /> <span id="name_status"></span>
+</p>
+<p>
+	<label for="profile">Profile URL</label>
+	<input type="text" name="profile" id="profile" />
+</p>
+<p>
+	<input type="submit" name="Save" id="Save" value="save" />
+</p>
+</form>
+</div>
+{% endblock %}
+
+{% block jquery_code %}
+	{{ super() }}
+	$("#name").keyup(function(){
+		var current_name = jQuery.trim($("#name").val());
+		if(current_name.length > 3){
+			$.ajax({
+				type: "GET",
+				url:"{{ url(controller='accounts',action='check_unique_name') }}",
+				data: "name="+current_name,
+				beforeSend: function(){
+					$("#name_status").html("Checking Availability...");
+				},
+				success: function(data){
+					$("#name_status").html(data);
+				}
+			});
+		}
+		else{
+			$("#name_status").html("name must be 3 or more characters long");
+		}
+	});
+{% endblock %}

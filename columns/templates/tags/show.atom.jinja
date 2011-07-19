@@ -1,0 +1,28 @@
+{%- from "/atompub/common.jinja" import set_if_exists, link_if_exists -%}
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+	<link rel="index" href="{{ app_globals.settings('site_link') }}" />
+	<link rel="service" href="{{ url('atom_service', qualified=True) }}" />
+	<link rel="alternate" href="{{ url.current(format='html', qualified=True) }}" />
+	<link rel="self" href="{{ url.current(qualified=True) }}" />
+	{#{ link_if_exists('link',app_globals.settings('site_license'), rel='license') }#}
+	{#<link rel="pingback" href="{{ url('pinkback_service', qualified=True) }}" />#}
+	<link rel="first" href="{{ url.current(p=1)) }}" />
+	<link rel="last" href="{{ url.current(p=item.articles.count() // settings.get('maximum_items')) }}" />
+	<link rel="next" href="{{ url.current(p=page_num + 1) }}" />
+	{% if page_num > 1 %}
+	<link rel="previous" href="{{ url.current(p=page_num-1) }}" />
+	{% endif %}
+	<id>{{ h.uuid4().get_urn() }}</id>
+	<title>{{ app_globals.settings('site_name') }}</title>
+	<updated>{{ item.articles[0].date|rfc3339 if item.articles != None else h.rfc3339.now()|rfc3339 }}</updated>
+	<generator>Columns AtomPub 1.0<generator>
+	{{ set_if_exists('rights',app_globals.settings('site_rights')) }}
+	{{ set_if_exists('icon',app_globals.settings('site_icon')) }}
+	{{ set_if_exists('logo',app_globals.settings('site_logo')) }}
+	{{ set_if_exists('subtitle',app_globals.settings('site_subtitle')) }}
+	{% from "/articles/formats.jinja" import show_atom as show_atom_article with context %}
+	{% for article in item.articles.limit(settings.get('maximum_items')).offset((page_num - 1) * settings.get('maximum_items')).all() %}
+		{{ show_atom_article(article) }}
+	{% endfor %}
+</feed>

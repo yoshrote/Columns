@@ -1,0 +1,25 @@
+{% from "/blog/macros.jinja" import show_atom_article with context %}
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+	<generator>Columns 1.0</generator>
+	<title>{{ app_globals.settings('site_name') }}</title>
+	<link href="{{ app_globals.settings('site_link') }}"/>
+	<link href="{{ request.url }}" rel="self"/>
+	<updated>{{ items[0].updated|rfc3339 if items|length > 0 else h.rfc3339.now()|rfc3339 }}</updated>
+	<id>{{ h.uuid4().get_urn() }}</id>
+	{% if app_globals.settings('site_rights') != None %}
+	<rights>{{ app_globals.settings('site_rights') }}</rights>
+	{% endif %}
+	{% if app_globals.settings('site_icon') != None %}
+	<icon>{{ app_globals.settings('site_icon') }}</icon>
+	{% endif %}
+	{% if app_globals.settings('site_logo') != None %}
+	<logo>{{ app_globals.settings('site_logo') }}</logo>
+	{% endif %}
+	{% if app_globals.settings('site_subtitle') != None %}
+	<subtitle>{{ app_globals.settings('site_subtitle') }}</subtitle>
+	{% endif %}
+	{% for post in items %}
+		{{ show_atom_article(post) }}
+	{% endfor %}
+</feed>

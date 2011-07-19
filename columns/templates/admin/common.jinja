@@ -1,0 +1,30 @@
+{% macro pagination(page_num) %}
+<div class="pagination">
+	{% if page_num > 1 %}
+	<a href="{{ url.current(p=[page_num-1,1]|maximum) }}" class="next_page">&lt;&lt;</a>
+	{% else %}
+	<span class="next_page">&lt;&lt;</span>
+	{% endif %}
+	<a href="{{ url.current(p=page_num + 1) }}" class="prev_page">&gt;&gt;</a>
+</div>
+{% endmacro %}
+
+{% macro link_if_allowed(label, url) %}
+{% if url is allowed -%}
+<a href="{{url}}" {{kwargs|xmlattr}}>{{label}}</a>
+{%- else -%}
+<span {{kwargs|xmlattr}}>{{label}}</span>
+{%- endif %}
+{% endmacro %}
+
+{% macro select(name, selected=None, opts=[]) %}
+	{% set prompt = kwargs.pop('prompt',None) %}
+	<select name="{{name}}" id="{{name.replace('.','')}}" {{kwargs|xmlattr}}>
+		{% if prompt != None %}
+		<option value="" {{'selected="selected"' if selected == None }}>{{prompt}}</option>
+		{% endif %}
+		{% for k,v in opts %}
+		<option value="{{k}}" {{'selected="selected"' if selected == k }}>{{v}}</option>
+		{% endfor %}
+	</select>
+{% endmacro %}

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+		http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+	<url>
+		<loc>{{ url("main") }}</loc>
+		<changefreq>always</changefreq>
+		<priority>1.0</priority>
+	</url>
+	{% for row in pages %}
+	<url>
+		<loc>{{ url("page_feed", page=row.slug) }}</loc>
+		<changefreq>always</changefreq>
+		<priority>0.8</priority>
+	</url>
+	{% endfor %}
+	{% for row in users %}
+	<url>
+		<loc>{{ url("user_feed", name=row.name) }}</loc>
+		<changefreq>always</changefreq>
+		<priority>0.64</priority>
+	</url>
+	{% endfor %}
+	{% for row in tags %}
+	<url>
+		<loc>{{ url("tag_feed", name=row.id) }}</loc>
+		<changefreq>always</changefreq>
+		<priority>0.64</priority>
+	</url>
+	{% endfor %}
+</urlset>

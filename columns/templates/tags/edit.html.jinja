@@ -1,0 +1,8 @@
+{% extends "/admin/main.jinja" %}
+{% from "/tags/formats.jinja" import edit_form, delete_form with context %}
+{% block content %}
+<div class="edit-form">
+{{ edit_form(item, settings) }}
+{{ delete_form(item, settings) }}
+</div>
+{% endblock %}

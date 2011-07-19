@@ -1,0 +1,240 @@
+@charset "UTF-8";
+/* See Rock City Scheme*/
+/***********************/
+/*a{text-decoration:none;color:$color1;}
+a:visited{color:$color2;}
+*/
+html {
+  background-color: #173f55;
+  color: black; }
+
+label {
+  font-weight: bold; }
+
+/* Base Layout CSS */
+#layout {
+  width: 1000px;
+  padding: 20px;
+  /*	margin:{
+  		left:auto;
+  		right:auto;
+  	}
+  */
+  text-align: left; }
+
+#header {
+  position: relative;
+  display: block;
+  width: 940px;
+  vertical-align: top;
+  box-sizing: border-box;
+  margin-top: 20px;
+  margin-left: 20px;
+  border-radius: 5px;
+  border-color: #c1c1c1;
+  border-style: solid;
+  border-width: 1px;
+  box-shadow: #282425 0px 0px 5px 0px;
+  background-color: #EEEEEE;
+  background: -webkit-gradient(linear, left top, left bottom, from(#4c4c4e), to(#282425));
+  background: -moz-linear-gradient(top, #4c4c4e, #282425);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4C4C4E', endColorstr='#282425'); }
+  #header h1 {
+    font-size: 3em;
+    font-weight: bold;
+    color: white;
+    line-height: 2em; }
+
+#footer {
+  position: relative;
+  display: block;
+  width: 940px;
+  vertical-align: top;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+  margin-left: 20px;
+  border-radius: 5px;
+  border-color: #c1c1c1;
+  border-style: solid;
+  border-width: 1px;
+  box-shadow: #282425 0px 0px 5px 0px;
+  background-color: #EEEEEE; }
+  #footer p {
+    line-height: 2em; }
+
+#content-frame {
+  position: relative;
+  display: inline-block;
+  box-sizing: border-box;
+  width: 790px;
+  vertical-align: top;
+  border-radius: 5px;
+  border-color: #c1c1c1;
+  border-style: solid;
+  border-width: 1px;
+  box-shadow: #282425 0px 0px 5px 0px;
+  background-color: #EEEEEE; }
+  #content-frame .content-top {
+    height: 20px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background-color: black;
+    background: -webkit-gradient(linear, left top, left bottom, from(#4c4c4e), to(#282425));
+    background: -moz-linear-gradient(top, #4c4c4e, #282425);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4C4C4E', endColorstr='#282425'); }
+  #content-frame .content-bottom {
+    padding: 10px; }
+
+#sidebar-nav {
+  position: relative;
+  display: inline-block;
+  margin-right: 15px;
+  box-sizing: border-box;
+  width: 130px;
+  vertical-align: top;
+  line-height: 1.5em;
+  text-align: left;
+  font-weight: bold;
+  border-radius: 5px;
+  border-color: #C1C1C1;
+  border-style: solid;
+  border-width: 1px;
+  background-color: #EEEEEE;
+  box-shadow: #282425 0px 0px 5px 0px; }
+  #sidebar-nav span, #sidebar-nav a {
+    display: block; }
+  #sidebar-nav .sidebar-top {
+    height: 20px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background-color: black;
+    background: -webkit-gradient(linear, left top, left bottom, from(#4c4c4e), to(#282425));
+    background: -moz-linear-gradient(top, #4c4c4e, #282425);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4c4c4e', endColorstr='#282425'); }
+  #sidebar-nav .sidebar-bottom {
+    padding: 10px; }
+
+/* Admin Interface CSS */
+.admin-list {
+  text-align: left;
+  padding: 10px; }
+  .admin-list .new-link {
+    display: inline-block; }
+  .admin-list table {
+    table-layout: fixed;
+    margin-top: 20px;
+    margin-bottom: 20px; }
+  .admin-list th, .admin-list td {
+    padding: 5px;
+    background-color: inherit;
+    border-color: #C1C1C1;
+    border-style: solid;
+    border-width: 3px; }
+  .admin-list th {
+    font-weight: bold;
+    background: -webkit-gradient(linear, left top, left bottom, from(#4c4c4e), to(#282425));
+    background: -moz-linear-gradient(top, #4c4c4e, #282425);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4c4c4e', endColorstr='#282425');
+    color: white; }
+  .admin-list .filler-cell {
+    background: -webkit-gradient(linear, left top, left bottom, from(#4c4c4e), to(#282425));
+    background: -moz-linear-gradient(top, #4c4c4e, #282425);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4c4c4e', endColorstr='#282425'); }
+  .admin-list tr .odd {
+    background-color: inherit;
+    color: inherit; }
+  .admin-list tr .even {
+    background-color: #333333;
+    color: inherit; }
+
+.edit-form {
+  /*	background-color:$background_color;
+  	color:inherit;
+  */
+  padding: 10px;
+  text-align: left;
+  vertical-align: bottom;
+  display: block; }
+  .edit-form textarea {
+    background-color: white;
+    color: black; }
+  .edit-form form {
+    display: inline-block; }
+  .edit-form label {
+    display: block;
+    margin-bottom: 5px; }
+  .edit-form input, .edit-form select, .edit-form textarea {
+    display: block;
+    /*margin-bottom:20px;*/ }
+  .edit-form input[type=text] {
+    width: 400px; }
+  .edit-form input[type=submit], .edit-form input[type=button], .edit-form button {
+    padding: 5px;
+    margin-top: 10px; }
+  .edit-form fieldset {
+    border: none; }
+  .edit-form .field-n-label {
+    display: block; }
+    .edit-form .field-n-label input, .edit-form .field-n-label select, .edit-form .field-n-label label {
+      display: inline-block; }
+    .edit-form .field-n-label label {
+      text-align: left;
+      width: 200px;
+      margin-top: 10px;
+      margin-bottom: 10px; }
+
+.pagination {
+  text-align: center;
+  font-size: large;
+  font-style: italic;
+  min-height: 40px; }
+  .pagination .prev_page {
+    display: inline-block;
+    float: right;
+    margin-bottom: 20px;
+    margin-left: 20px; }
+  .pagination .next_page {
+    display: inline-block;
+    float: left;
+    margin-bottom: 20px;
+    margin-right: 20px; }
+
+/* Image Browser CSS */
+#thumb-browser {
+  /*background-color:$background_color;color:black;*/
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: inline-block;
+  box-sizing: border-box;
+  vertical-align: top;
+  border-radius: 5px;
+  border-color: #c1c1c1;
+  border-style: solid;
+  border-width: 1px;
+  box-shadow: #282425 0px 0px 5px 0px;
+  background-color: #EEEEEE;
+  padding: 10px; }
+  #thumb-browser fieldset {
+    border: none; }
+
+.thumb-container {
+  outline: #2b77c4 solid 1px;
+  display: inline-block;
+  width: 130px;
+  height: 130px;
+  margin: 5px; }
+  .thumb-container input {
+    display: block;
+    margin-left: auto;
+    margin-right: auto; }
+
+.thumbnail {
+  display: block;
+  max-width: 100px;
+  max-height: 100px;
+  margin-top: 5px;
+  margin-left: auto;
+  margin-right: auto; }
+
+/*********************/

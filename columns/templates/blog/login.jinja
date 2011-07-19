@@ -1,0 +1,88 @@
+{% extends "/blog/main.jinja" %}
+{% from "/blog/macros.jinja" import form with context %}
+{% block content %}
+<div id="dialog">
+Enter your OpenID URL
+<form>
+<fieldset>
+<input type="text" name="openid_url" id="openid_url" />
+</fieldset>
+</form>
+</div>
+{{ form(url('challenge'), method="post", id="login-form", class="login-form") }}
+<table>
+	<caption>Click to login using one of the following services:</caption>
+	<tr>
+		<td>
+			<a id="login-openid">
+				<img src="{{ url("static", path="/images/login/openid.png") }}" alt="Login with OpenID" height="49" width="150" />
+			</a>
+		</td>
+		<td>
+			<a id="login-twitter">
+				<img src="{{ url("static", path="/images/login/twitter.png") }}" alt="Login with Twitter" height="50" width="150" />
+			</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<a id="login-google">
+				<img src="{{ url("static", path="/images/login/google.png") }}" alt="Login with Google" height="50" width="150" />
+			</a>
+		</td>
+		<td>
+			<a id="login-facebook">
+				<img src="{{ url("static", path="/images/login/facebook.png") }}" alt="Login with Facebook" height="50" width="151" />
+			</a>
+		</td>
+	</tr>
+</table>
+
+<p>
+	Don't have a login for any of these? Not to worry.  You can signup for an OpenID <a href="https://www.myopenid.com/">here at myOpenID</a> for free.  OpenID is a login system used by many sites including Digg, Facebook, Technorati, Plaxo and others.
+</p>
+<input type="hidden" name="auth_id" id="auth_id" />
+<input type="hidden" name="auth_type" id="auth_type" />
+
+</form>
+{% endblock %}
+
+{% block jquery_code %}
+	{{ super() }}
+	$("#dialog").dialog({
+		autoOpen: false,
+		height: 150,
+		width: 350,
+		modal: true,
+		resizable: false,
+		buttons: {
+			'Login': function() {
+				var oid_url = $("input[name='openid_url']").val();
+				$("input[name='auth_id']").val(oid_url);
+				$("input[name='auth_type']").val("openid");
+				$("#login-form").submit();
+				$(this).dialog('close');
+			},
+			'Cancel': function() {
+				$(this).dialog('close');
+			},
+		},
+	});
+	$("#login-twitter").click(function(){
+		$("input[name='auth_type']").val("twitter");
+		$("#login-form").submit();
+	});
+	$("#login-facebook").click(function(){
+		$("input[name='auth_type']").val("facebook");
+		$("#login-form").submit();
+	});
+	$("#login-google").click(function(){
+		$("input[name='auth_type']").val("google");
+		$("input[name='auth_id']").val("https://www.google.com/accounts/o8/id");
+		$("#login-form").submit();
+	});
+	$("#login-openid").click(function(){
+		$("input[name='auth_type']").val("openid");
+		$("#dialog").dialog('open');
+	});
+{% endblock %}

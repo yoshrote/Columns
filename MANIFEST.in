@@ -1,0 +1,5 @@
+include columns/config/deployment.ini_tmpl
+recursive-include columns/public *
+recursive-include columns/templates *
+recursive-exclude columns *.pyc
+recursive-exclude jinja2 *

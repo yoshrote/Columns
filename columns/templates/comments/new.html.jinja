@@ -1,0 +1,59 @@
+{% extends "/blog/main.jinja" %}
+{% from "/comments/formats.jinja" import new_form with context %}
+{% block content %}
+<div class="edit-form">
+{{ new_form(item, settings) }}
+</div>
+{% endblock %}
+
+{% block head_styles %}
+{{ super() }}
+<link href="{{ url("static", path="/stylesheets/bbcode/style.css") }}" media="screen" rel="stylesheet" type="text/css" />
+<style>
+	textarea#content{color:black;}
+</style>
+{% endblock %}
+
+{% block head_scripts %}
+{{ super() }}
+<script src="{{ url("static", path="/scripts/jquery.bbcodeeditor-1.0.min.js") }}" type="text/javascript"></script>
+<script type="text/javascript">
+	$(function(){
+		$('textarea[name=content]').bbcodeeditor(
+		{
+			bold:$('.bold'),italic:$('.italic'),underline:$('.underline'),link:$('.link'),quote:$('.quote'),code:$('.code'),
+			usize:$('.usize'),dsize:$('.dsize'),nlist:$('.nlist'),blist:$('.blist'),litem:$('.litem'),
+			back:$('.back'),forward:$('.forward'),back_disable:'btn back_disable',forward_disable:'btn forward_disable',
+			preview:$('.preview')
+		});
+	});
+</script>
+{% endblock %}
+
+{% block jquery_code %}
+{{ super() }}
+{% if session['user_name'] == None %}
+$("#name").keyup(function(){
+	var current_name = jQuery.trim($("#name").val());
+	if(current_name.length > 3){
+		$.ajax({
+			type: "GET",
+			url:"{{ url(controller='accounts',action='check_unique_name') }}",
+			data: "name="+current_name,
+			beforeSend: function(){
+				$("#name_status").html("Checking Availability...");
+			},
+			success: function(data){
+				$("#name_status").html(data);
+			}
+		});
+	}
+	else if(current_name.length == 0){
+		$("#name_status").html("");
+	}
+	else{
+		$("#name_status").html("name must be 3 or more characters long");
+	}
+});
+{% endif %}
+{% endblock %}

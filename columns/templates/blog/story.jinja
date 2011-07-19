@@ -1,0 +1,87 @@
+{% extends "/blog/main.jinja" %}
+{% from "/blog/macros.jinja" import share_this, show_comments with context %}
+
+{% block content %}
+<div class="story-container hentry">
+	<div class="story-title entry-title">
+		<h1>
+			<a href="{{ url("story", permalink=item.permalink, qualified=True) }}" rel="bookmark">{{ item.title }}</a>
+		</h1>
+	</div>
+	<div class="story-user author">
+		by <a href="{{ url("user_feed", name=item.author['name']) }}" title="View articles by {{ item.author['name'] }}">{{ item.author['name'] }}</a>
+	</div>
+	<div class="story-date published">
+		<abbr title="{{ item.published|rfc3339 }}">
+			{{ item.published|localized_datetime_format(app_globals.settings('date_format')) }}
+		</abbr>
+	</div>
+	{% if url('edit_article', id=item.id) is allowed %}
+	<div class="story-edit">
+		<a href="{{ url('edit_article', id=item.id) }}" title="Edit Article {{ item.id }}">Edit Article</a>
+	</div>
+	{% endif %}
+	<div class="story-content entry-content">
+		{{ item.content or '' | safe }}
+	</div>
+	<div class="story-tags">
+		<h3>Tags:</h3>
+		{% if item.tags|length > 0 %}
+		<ul class="story-tags-list">
+			{% for tag in item.tags %}
+			<li class="story-tags-item">
+				<a href="{{ url("tag_feed", name=tag.id) }}" title="View articles with tag {{ tag.label }}" rel="tag">{{ tag.label }}</a>
+			</li>
+			{% endfor %}
+		</ul>
+		{% endif %}
+	</div>
+	{{ share_this(item.title, item.permalink) }}
+</div>
+{% if item.can_comment %}
+{{ show_comments(item,item.page.story_comment_style) }}
+{% endif %}
+{% endblock %}
+
+{% block title -%}
+{{ app_globals.settings('site_name') }} - {{ item.title }}
+{%- endblock %}
+
+{% block head_links -%}	
+{#<link rel="pingback" href="{{ url('pingback', qualified=True) }}"/>#}
+<link rel="canonical" href="{{ url('story', permalink=item.permalink, qualified=True) }}"/>
+{% for k,v in item.links.items() %}
+<link rel="{{k}}" href="{{v}}"/>
+{% endfor %}
+{%- endblock %}
+
+{% block head_metadata -%}
+	{{ super() }}
+	<meta name="DC.publisher" content="{{ app_globals.settings('site_name') }}" />
+	<meta name="DC.publisher.url" content="{{ url('main',qualified=True) }}" />
+	<meta name="DC.title" content="{{ item.title }}" />
+	<meta name="DC.identifier" content="{{ url('story', permalink=item.permalink, qualified=True) }}" />
+	<meta name="DC.date.created" scheme="WTN8601" content="{{ item.created|localized_datetime_format }}" />
+	<meta name="DC.created" scheme="WTN8601" content="{{ item.created|localized_datetime_format }}" />
+	<meta name="DC.date" scheme="WTN8601" content="{{ item.updated|localized_datetime_format }}" />
+	<meta name="DC.creator.name" content="{{ item.author['name'] }}" />
+	<meta name="DC.creator" content="{{ item.author['name'] }}" />
+	<meta name="DC.rights.rightsHolder" content="{{ app_globals.settings('site_name') }}" />
+	<meta name="DC.language" content="en-US" scheme="rfc1766" />
+	{% if item.tags|length > 0 %}
+	{% for tg in item.tags %}
+	<meta name="DC.subject" content="{{ tg.label }}" />
+	{% endfor %}
+	{% endif %}
+	<meta name="DC.rights.license" content="http://creativecommons.org/licenses/by-sa/3.0/" />
+	<meta name="DC.license" content="http://creativecommons.org/licenses/by-sa/3.0/" />
+
+	<meta name="title" content="{{ item.title }}"/>
+	<meta name="description" content="{{ item.metacontent | truncate(length=1000, killwords=False, end='...') }}"/>
+	{% if item.tags|length > 0 %}
+	<meta name="keywords" content="{{ item.tags | join(', ', attribute='label') }}"/>
+	{% endif %}
+	{% for k,v in item.metatags.items() %}
+	<meta name="{{ k }}" content="{{ v }}"/>
+	{% endfor %}
+{%- endblock %}

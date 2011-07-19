@@ -1,0 +1,10 @@
+@charset "UTF-8";
+html {
+  color: white;
+  font-family: 'Lucida Grande', Arial, Helvetica, sans-serif;
+  background-image: none;
+  background-color: black; }
+
+body {
+  height: 100%;
+  background-image: none; }

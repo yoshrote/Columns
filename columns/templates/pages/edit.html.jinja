@@ -1,0 +1,47 @@
+{% extends "/admin/main.jinja" %}
+{% from "/pages/formats.jinja" import edit_form, delete_form with context %}
+{% block content %}
+<div class="edit-form">
+{{ edit_form(item, settings) }}
+{{ delete_form(item, settings) }}
+</div>
+{% endblock %}
+
+{% block head_scripts %}
+{{ super() }}
+<script src="{{ url("static", path="/scripts/ckeditor/ckeditor.js") }}" type="text/javascript"></script>
+<script src="{{ url("static", path="/scripts/ckeditor/adapters/jquery.js") }}" type="text/javascript"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	var config = {
+		toolbar:
+		[
+			['Source','-','Preview','-',],
+			['Cut','Copy','Paste','PasteText','-','SpellChecker', 'Scayt'],
+			['Undo','Redo','-','Find','Replace'],
+			['TextColor','BGColor','-','Maximize', 'ShowBlocks'],
+			'/',
+			['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
+			['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
+			['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
+			['Link','Unlink','Anchor'],
+			'/',
+			['Styles','Format','Font','FontSize'],
+			['Image','Flash','Table','HorizontalRule','Smiley','SpecialChar'],
+		],
+		filebrowserBrowseUrl : '{{ url(controller="admin", action="browse") }}',
+		filebrowserUploadUrl : '{{ url(controller="admin", action="quick_upload") }}',
+		flashAddEmbedTag : false,
+		docType : '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
+		resize_enabled : false,
+		contentsCss : ['{{ url("static", path="/stylesheets/yui-combo.css") }}','{{ url("static", path="/stylesheets/styles.css") }}','{{ url("static", path="/stylesheets/ckedit.css") }}'],
+		bodyClass : 'page-container page-content',
+		bodyId : 'content',
+		width:740,
+	};
+	// Initialize the editor.
+	// Callback function can be passed and executed after full instance creation.
+	$('.jquery_ckeditor').ckeditor(config);
+});
+</script>
+{% endblock %}

@@ -1,0 +1,213 @@
+{% macro show_article(item, summarize=False) %}
+{% if summarize == True %}
+	{% set post_content = item.summary %}
+{% else %}	
+	{% set post_content = item.content %}
+{% endif %}	
+<div class="story-container hentry">
+	<div class="story-title entry-title">
+		<{{ 'h2' if summarize else 'h1' }}>
+			<a href="{{ url("story", permalink=item.permalink, qualified=True) }}" rel="bookmark">{{ item.title }}</a>
+		</{{ 'h2' if summarize else 'h1' }}>
+	</div>
+	<div class="story-user author">
+		by <a href="{{ url("user_feed", name=item.author['name']) }}" title="{{ "View articles by %s"|format(item.author['name']) }}">{{ item.author['name'] }}</a>
+	</div>
+	<div class="story-date published">
+		<abbr title="{{ item.published|rfc3339 }}">
+			{{ item.published|localized_datetime_format(app_globals.settings('date_format')) }}
+		</abbr>
+	</div>
+	{% if url('edit_article', id=item.id) is allowed %}
+	<div class="story-edit">
+		<a href="{{ url('edit_article', id=item.id) }}">Edit Article</a>
+	</div>
+	{% endif %}
+	<div class="story-content {{ 'entry-summary' if summarize else 'entry-content' }}">
+		{{post_content or '' | safe }}
+		<a href="{{ url("story", permalink=item.permalink, qualified=True) }}" title="{{ "View full post for article %s"|format(item.id) }}">click through to see the full article</a>
+	</div>
+	<div class="story-tags">
+		<h3>Tags:</h3>
+		{% if item.tags|length > 0 %}
+		<ul class="story-tags-list">
+			{% for tag in item.tags %}
+			<li class="story-tags-item">
+				<a href="{{ url("tag_feed", name=tag.id) }}" title="{{ "View posts with tag %s"|format(tag.label) }}" rel="tag">{{ tag.label }}</a>
+			</li>
+			{% endfor %}
+		</ul>
+		{% endif %}
+	</div>
+	{% if item.can_comment %}
+	{{ show_comments(item,'summary') }}
+	{% endif %}
+</div>
+{% endmacro %}
+{% macro share_this(title, permalink) %}
+<div class="share-this">
+{% set link_url = url("story", permalink=permalink, qualified=True) %}
+Share this story on:
+<ul>
+	<li>
+		<a href="http://twitter.com/home?status={{ title|urlquote }}+{{ link_url|urlquote }}" target="blank_" title="Share {{ title|escape }} on Twitter">
+			<img src="{{ url("static", path="/images/share_this/twitter_32.png") }}" alt="Twitter" height="32" width="32" />
+		</a>
+	</li>
+	<li>
+		<a href="http://www.facebook.com/share.php?u={{ link_url|urlquote }}&amp;t={{ title|urlquote }}" target="blank_" title="Share {{ title|escape }} on Facebook">
+			<img src="{{ url("static", path="/images/share_this/facebook_32.png") }}" alt="Facebook" height="32" width="32" />
+		</a>
+	</li>
+	<li>
+		<a href="http://www.myspace.com/Modules/PostTo/Pages/?u={{ link_url|urlquote }}" target="blank_" title="Share {{ title|escape }} on MySpace">
+			<img src="{{ url("static", path="/images/share_this/myspace_32.png") }}" alt="MySpace" height="32" width="32" />
+		</a>
+	</li>
+	<li>
+		<a href="http://digg.com/submit?phase=2&amp;url={{ link_url|urlquote }}" target="blank_" title="Share {{ title|escape }} on Digg">
+			<img src="{{ url("static", path="/images/share_this/digg_32.png") }}" alt="Digg" height="32" width="32" />
+		</a>
+	</li>
+	<li>
+		<a href="http://reddit.com/submit?url={{ link_url|urlquote }}&amp;title={{ title|urlquote }}" target="blank_" title="Share {{ title|escape }} on reddit">
+			<img src="{{ url("static", path="/images/share_this/reddit_32.png") }}" alt="reddit" height="32" width="32" />
+		</a>
+	</li>
+	<li>
+		<a href="http://del.icio.us/post?url={{ link_url|urlquote }}&amp;title={{ title|urlquote }}" target="blank_" title="Share {{ title|escape }} on Del.icio.us">
+			<img src="{{ url("static", path="/images/share_this/delicious_32.png") }}" alt="Del.icio.us" height="32" width="32" />
+		</a>
+	</li>
+</ul>
+</div>
+{% endmacro %}
+{% macro show_comments(article=None, format='none',reverse_comments=False) %}
+<div class="comments-container">
+{% set article_subject = "article %s"%article.id %}
+{% if format == 'none' %}
+	<a href="{{ ''.join([url("story", permalink=article.permalink),'#comments']) }}" title="view comments for {{ article_subject }}">View Comments</a>
+	|
+	<a href="{{ url('new_comment', parent_id=article.id) }}" class="comment-link" title="write comment for {{ article_subject }}">Leave a Comment...</a>
+{% elif format == 'summary' %}
+	<a href="{{ ''.join([url("story", permalink=article.permalink),'#comments']) }}" title="view comments for {{ article_subject }}">{{ app_globals.count_comments(article) }} Comments</a>
+	|
+	<a href="{{ url('new_comment', parent_id=article.id) }}" class="comment-link" title="write comment for {{ article_subject }}">Leave a Comment...</a>
+{% else %}
+	<a href="{{ url('new_comment', parent_id=article.id) }}" class="comment-link" title="write comment for {{ article_subject }}">Leave a comment</a>
+	{% if app_globals.count_comments(article) > 0 %}
+	<ul class="comments-list">
+		{#% if reverse_comments == False %#}
+			{% for comment in article.comments.all() %}
+		<li class="comment-list-item">
+			{{ show_single_comment(comment) }}
+		</li>
+			{% endfor %}
+		{#% else %}
+			{% for comment in article.comments.all()[::-1] %}
+		<li class="comment-list-item">
+			{{ show_single_comment(comment) }}
+		</li>
+			{% endfor %}
+		{% endif %#}
+	</ul>
+	<a href="{{ url('new_comment', parent_id=article.id) }}" class="comment-link" title="write comment for {{ article_subject }}">Leave a comment</a>
+	{% endif %}
+{% endif %}
+</div>
+{% endmacro %}
+{% macro link_to_if(condition, label, url) %}
+{% if condition -%}
+<a href="{{url}}" {{kwargs|xmlattr}}>{{label}}</a>
+{%- else -%}
+{{label}}
+{%- endif %}
+{% endmacro %}
+
+{% macro button_to(label, url, method="post") %}
+<form action="{{url}}" class="button-to" method="{{'post' if method|lower != 'get' else 'get'}}">
+	<div>
+	{% if method|lower in ['delete','put'] -%}
+	<input type="hidden" name="_method" value="{{method|lower}}" />
+	{%- endif %}
+	<input value="{{label}}" type="submit" {{kwargs|xmlattr}} />
+	</div>
+</form>
+{% endmacro %}
+
+{% macro form(url, method="post") %}
+<form action="{{url}}" method="{{'post' if method|lower != 'get' else 'get'}}" {{kwargs|xmlattr}} >
+	{% if method|lower in ['delete','put'] -%}
+	<input type="hidden" name="_method" value="{{method|lower}}" />
+	{%- endif %}
+{% endmacro %}
+
+{% macro show_single_comment(comment, permalink=None) %}
+<div class="comment-container">
+	<div class="comment-title">
+		{{comment.title}}
+		{#
+		{% if url(controller='comments', action='delete', parent_id=comment.article.id, id=comment.id) is allowed %}
+		{{ button_to("Delete", url('comments', parent_id=comment.article_id, id=comment.id), method="delete")}
+		{% endif %}
+		#}
+	</div>
+	<div class="comment-user">
+		{{ link_to_if(comment.author['uri'] != None, comment.author['name'], comment.author['uri']) }}
+	</div>
+	<div class="comment-date">
+		{{ comment.published|localized_datetime_format(app_globals.settings('date_format')) }}
+	</div>
+	<div class="comment-content">
+		{{ comment.content|bbcode | safe }}
+	</div>
+	{% if permalink != None %}
+	<a href="{{ url('new_comment', parent_id=comment.article_id) }}" class="comment-link">Reply</a>
+	{% endif %}
+</div>
+{% endmacro %}
+{% macro show_atom_article(item, summarize=False) %}
+	{% if summarize == True %}
+		{% set post_content = item.summary %}
+	{% else %}	
+		{% set post_content = item.content %}
+	{% endif %}	
+	<entry>
+		<dc:title>{{ item.title }}</dc:title>
+		<dc:publisher>{{ app_globals.settings('site_name') }}</dc:publisher>
+		<dc:language>en</dc:language>
+		<dc:identifier>{{ url('story', permalink=item.permalink, qualified=True) }}</dc:identifier>
+		<dc:rights>{{ app_globals.settings('site_rights') }}</dc:rights>
+		<dc:date>{{ item.updated.strftime('%Y-%m-%d') }}</dc:date>
+		<dc:subject>{{ item.tags | join(', ', attribute='label') }}</dc:subject>
+		<title>{{ item.title }}</title>
+		<link href="{{ url('story', permalink=item.permalink, qualified=True) }}"/>
+		<id>{{ item.id }}</id>
+		<author>
+			<name>{{ item.author['name'] }}</name>
+		</author>
+		<dc:creator>{{ item.author['name'] }}</dc:creator>
+		{#
+		<contributor></contributor>
+		<published></published>
+		#}
+		<updated>{{ item.updated|rfc3339 }}</updated>
+		{% if summarize == True %}
+		<summary type="xhtml">
+			<div xmlns="http://www.w3.org/1999/xhtml">
+			{{ post_content or '' | safe }}
+			<a href="{{ url("story", permalink=item.permalink, qualified=True) }}" title="View full post for article {{ item.id }}">click through to see the full article</a>
+			</div>
+		</summary>
+		{% else %}
+		<content type="xhtml">
+			<div xmlns="http://www.w3.org/1999/xhtml">
+			{{ post_content or '' | safe }}
+			</div>
+		</content>
+		{% endif %}
+		{% for tag in item.tags %}
+		<category term="{{ tag.id }}" label="{{ tag.label }}"/>
+		{% endfor %}
+	</entry>	
+{% endmacro %}

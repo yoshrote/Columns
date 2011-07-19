@@ -1,0 +1,9 @@
+{% extends "/admin/main.jinja" %}
+{% from "/admin/common.jinja" import pagination with context %}
+{% from "/settings/formats.jinja" import index_html with context %}
+{% block content %}
+<div class="admin-list">
+{{ index_html(items, settings) }}
+{{ pagination(page_num) }}
+</div>
+{% endblock %}

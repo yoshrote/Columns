@@ -1,0 +1,22 @@
+{% extends "/blog/main.jinja" %}
+{% from "/blog/macros.jinja" import show_article with context %}
+{% block content %}
+<div class="page-posts">
+	{% for item in items %}
+	{{ show_article(item,summarize=True) }}
+	{% endfor %}
+</div>
+<div class="pagination">
+	<a href="{{ url.current(p=page_num + 1) }}" class="next_page page_button">&lt;&nbsp;&nbsp;Older Entries</a>
+	{% if page_num > 1 %}
+	<a href="{{ url.current(p=[page_num-1,1]|maximum) }}" class="prev_page page_button">Newer Entries&nbsp;&nbsp;&gt;</a>
+	{% endif %}
+</div>
+{% endblock %}
+{% block head_metadata -%}
+{{ super() }}
+<meta name="DC.title" content="{{ app_globals.settings('site_name') }}" />
+<meta name="title" content="{{ app_globals.settings('site_name') }}"/>
+<meta name="description" content="{{ app_globals.settings('site_description') }}"/>
+<meta name="keywords" content="{{ app_globals.settings('site_keywords') }}"/>
+{%- endblock %}

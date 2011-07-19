@@ -1,0 +1,29 @@
+{% extends "/blog/main.jinja" %}
+{% block content %}
+<div>
+	<span class="section-title">Pages:</span>
+	<ul class="sitemap-link-list">
+	{% for row in pages %}
+		<li><a href="{{ url('page_feed', page=row.slug) }}" title="{{ row.title }}">{{ row.title }}</a></li>
+	{% endfor %}
+	</ul>
+</div>
+
+<div>
+	<span class="section-title">Posts by User:</span>
+	<ul class="sitemap-link-list">
+	{% for row in users %}
+		<li><a href="{{ url('user_feed', name=row.name) }}" title="{{ row.name }}">{{ row.name }}</a></li>
+	{% endfor %}
+	</ul>
+</div>
+
+<div>
+	<span class="section-title">Posts by Tag:</span>
+	<ul class="sitemap-link-list"> 
+	{% for row in tags %}
+		<li><a href="{{ url('tag_feed', name=row.id) }}" title="{{ row.label }}">{{ row.label }}</a></li>
+	{% endfor %}
+	</ul>
+</div>
+{% endblock %}

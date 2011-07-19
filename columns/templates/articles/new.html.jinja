@@ -1,0 +1,95 @@
+{% extends "/admin/main.jinja" %}
+{% from "/articles/formats.jinja" import new_form with context %}
+{% block content %}
+<div class="edit-form">
+{{ new_form(item, settings) }}
+</div>
+{% endblock %}
+
+{% block head_scripts %}
+{{ super() }}
+<script src="{{ url("static", path="/scripts/ckeditor/ckeditor.js") }}" type="text/javascript"></script>
+<script src="{{ url("static", path="/scripts/ckeditor/adapters/jquery.js") }}" type="text/javascript"></script>
+<script type="text/javascript">
+var timestamp= function (date) {
+ var pad = function (amount, width) {
+  var padding = "";
+  while (padding.length < width - 1 && amount < Math.pow(10, width - padding.length - 1))
+   padding += "0";
+  return padding + amount.toString();
+ }
+ date = date ? date : new Date();
+ return pad(date.getUTCFullYear(), 4)
+   + "-" + pad(date.getUTCMonth() + 1, 2)
+   + "-" + pad(date.getUTCDate(), 2)
+   + "T" + pad(date.getUTCHours(), 2)
+   + ":" + pad(date.getUTCMinutes(), 2)
+   + ":" + pad(date.getUTCSeconds(), 2)+'Z';
+}
+</script>
+{% endblock %}
+
+{% block jquery_code %}
+	{{ super() }}
+	var config = {
+		toolbar:
+		[
+			['Source','-','Preview','-',],
+			['Cut','Copy','Paste','PasteText','-','SpellChecker', 'Scayt'],
+			['Undo','Redo','-','Find','Replace'],
+			['TextColor','BGColor','-','Maximize', 'ShowBlocks'],
+			'/',
+			['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
+			['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
+			['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
+			['Link','Unlink','Anchor'],
+			'/',
+			['Styles','Format','Font','FontSize'],
+			['Image','Flash','Table','HorizontalRule','SpecialChar'],
+		],
+		filebrowserBrowseUrl : '{{ url(controller="admin", action="browse") }}',
+		filebrowserUploadUrl : '{{ url(controller="admin", action="quick_upload") }}',
+		flashAddEmbedTag : false,
+		docType : '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
+		resize_enabled : false,
+		contentsCss : ['{{ url("static", path="/stylesheets/yui-combo.css") }}','{{ url("static", path="/stylesheets/styles.css") }}','{{ url("static", path="/stylesheets/ckedit.css") }}'],
+		bodyClass : 'story-container story-content',
+		bodyId : 'ckbody',
+		width:740,
+	};
+	// Initialize the editor.
+	// Callback function can be passed and executed after full instance creation.
+	ckeditor_instance = $('.jquery_ckeditor').ckeditor(config);
+	
+	$('#published_button').click(function(){
+		$('input[name="published"]').val(timestamp());
+		$('#post_form').submit();
+	});
+	$('#preview_post').click(function(){
+		var editor = $('.jquery_ckeditor').ckeditorGet();
+		editor.execCommand('preview');
+	});
+	$.ajax({
+		type: "GET",
+		url:"{{ url(controller='admin',action='tag_cloud') }}",
+		data: "max=50",
+		dataType: "json",
+		success: function(data){
+			$.each(data, function(){
+				if(this.count > 1){
+					var li = $("<li>").attr({style:"display:inline-block;margin-right:0.5em;margin-left:0.5em;"});
+					$("<a>").text(this.name).attr({href:"#"+this.id,'class':'tag-val'}).appendTo(li);
+					li.children().css("fontSize", (this.count / 10 < 1) ? this.count / 10 + 1 + "em": (this.count / 10 > 2) ? "2em" : this.count / 10 + "em");
+					li.appendTo("#tag-cloud");
+				}
+			});
+			$('a.tag-val').click(function(){
+				var tmp;
+				if ($('#tags').val().trim() == ''){tmp = $(this).text();}
+				else{tmp = $('#tags').val() + ', ' + $(this).text();}
+				$('#tags').val(tmp);
+				return false;
+			});
+		}
+	});
+{% endblock %}

@@ -1,0 +1,113 @@
+{% from "/admin/common.jinja" import link_if_allowed with context %}
+{% from "/atompub/common.jinja" import set_if_exists %}
+{% from "/blog/macros.jinja" import form with context %}
+{% macro new_form(item, settings) %}
+{{ form(url('pictures'), method="post", enctype="multipart/form-data") }}
+<fieldset>
+	<div class="field-n-label">
+	<label for="upload">File</label>
+	<input id="upload" name="upload" type="file" />
+	</div>
+	<div class="field-n-label">
+	<label for="title">Alternative Text</label>
+	<input type="text" name="title" id="title" length="255" value="{{ item.title|formfield }}" />
+	</div>
+	<div class="field-n-label">
+	<label for="content">Description</label>
+	<textarea id="content" name="content">{{ item.content|formfield }}</textarea>
+	</div>
+	<input type="submit" name="save" id="save" value="Save" />
+</fieldset>
+</form>
+{% endmacro %}
+
+{% macro edit_form(item, settings) %}
+{{ form(url('picture', id=item.id), method="put") }}
+<fieldset>
+	<div class="field-n-label">
+	<label for="title">Alternative Text</label>
+	<input type="text" name="title" id="title" length="255" value="{{ item.title|formfield }}" />
+	</div>
+	<div class="field-n-label">
+	<label for="content">Description</label>
+	<textarea id="content" name="content">{{ item.content|formfield }}</textarea>
+	</div>
+	<input type="submit" name="save" id="save" value="Save" />
+</fieldset>
+</form>
+{% endmacro %}
+
+{% macro delete_form(item, settings) %}
+{{ form(url('picture', id=item.id), method="delete") }}
+<fieldset>
+	<input type="submit" value="Delete" />
+</fieldset>
+</form>
+{% endmacro %}
+
+{% macro index_html(items, settings) %}
+<table>
+	<thead>
+		<tr>
+			<td class="filler-cell">&nbsp;</td>
+			<th>Filename</th>
+			<th>Date</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for item in items %}
+	<tr class="{{ loop.cycle('odd', 'even') }}">
+		<td>
+			{{ link_if_allowed("Edit",url('edit_picture', id=item.id)) }}
+		</td>
+		<td><a href="{{ item.filepath }}" target="blank_">{{ item.title }}</a></td>
+		<td>{{ item.updated|localized_datetime_format(app_globals.settings('date_format')) }}</td>
+	</tr>
+	{% endfor %}
+	</tbody>
+</table>
+{% endmacro %}
+
+{% macro show_html(item, settings) %}
+<div class="pictures-show">
+	<h2>{{ item.title }}</h2>
+	<img src="{{ item|upload_url }} alt="{{ item.title }}" />
+	<p>{{ item.content }} </p>
+</div>
+{% endmacro %}
+
+{% macro show_json(item, settings) %}
+{{ item.to_dict()|jsonify }}
+{% endmacro %}
+
+{% macro show_atom(item, settings) -%}
+<atom:entry xmlns:atom="http://www.w3.org/2005/Atom">
+	<atom:link href="{{ url('picture', id=item.id, qualified=True) }}" rel="self" />
+	<atom:link href="{{ url('edit_picture', id=item.id, qualified=True) }}" rel="edit" />
+	{#
+	<atom:link href="{{ url('edit_picture', id=item.id, qualified=True) }}" rel="edit-media" />
+	<atom:link href="{{ url('edit_article', id=item.id, qualified=True) }}" rel="enclosure" />
+	#}
+	<atom:link href="{{ url('atom_service', qualified=True) }}" rel="service" />
+	<atom:title>{{ item.title }}</atom:title>
+	<atom:id>{{ item.atom_id }}</atom:id>
+	<atom:author>
+		<atom:name>{{ item.author['name'] }}</atom:name>
+		{{ set_if_exists('atom:email',item.author['email']) }}
+		{{ set_if_exists('atom:uri',item.author['uri']) }}
+	</atom:author>
+	{{ set_if_exists('atom:published',item.published|rfc3339) }}
+	<atom:updated>{{ item.updated|rfc3339 }}</atom:updated>
+	<atom:content src="{{ item|upload_url }}" />{# a type attribute SHOULD be added here. This info should be stored in the Upload object #}
+	<atom:summary type="html">
+		{{ item.content }}
+	</atom:summary>
+	{%- for link in item.links %}
+	<atom:link {{link|xmlattr}} />
+	{%- endfor %}
+	{{ set_if_exists('atom:rights',app_globals.settings('site_rights')) }}
+	{%- for tag in item.tags %}
+	<atom:category term="{{ tag.id }}" label="{{ tag.label }}" scheme="{{ url('formatted_tag_feed', name=tag.id, format='atom', qualified=True) }}" />
+	{%- endfor %}
+</atom:entry>
+{% endmacro %}

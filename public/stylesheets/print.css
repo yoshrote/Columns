@@ -1,0 +1,3 @@
+body{font-family:serif;font-size:0.9em}
+a:link,a:visited{color:black;background:transparent;text-decoration:underline}
+#header,#menu,#footer,#sidebar,#comments-form,.share-this,#pager,object,embed,hr{display:none}

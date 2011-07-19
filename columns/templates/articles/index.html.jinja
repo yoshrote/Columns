@@ -1,0 +1,14 @@
+{% extends "/admin/main.jinja" %}
+{% from "/admin/common.jinja" import pagination, link_if_allowed with context %}
+{% from "/articles/formats.jinja" import index_html with context %}
+{% block content %}
+<div class="admin-list">
+<div>
+	<a href="{{ url('formatted_articles', format='html') }}" class="new-link">Show Posts</a> | 
+	<a href="{{ url('formatted_articles', drafts='1', format='html') }}" class="new-link">Show Drafts</a>
+</div>
+{{ link_if_allowed("Create New",url('new_article'), class="new-link") }}
+{{ index_html(items, settings) }}
+{{ pagination(page_num) }}
+</div>
+{% endblock %}

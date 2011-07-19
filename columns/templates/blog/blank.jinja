@@ -1,0 +1,11 @@
+{% extends "/blog/main.jinja" %}
+{% block content %}
+<div class="page-content">{{ page.content | safe }}</div>
+{% endblock %}
+{% block head_metadata %}
+{{ super() }}
+<meta name="DC.title" content="{{ app_globals.settings('site_name') }} - {{ page.title }}" />
+<meta name="title" content="{{ app_globals.settings('site_name') }} - {{ page.title }}"/>
+<meta name="description" content="{{ app_globals.settings('site_description') }}"/>
+<meta name="keywords" content="{{ app_globals.settings('site_keywords') }}"/>
+{% endblock %}

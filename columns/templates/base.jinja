@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US">
+	<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta http-equiv="X-XRDS-Location" content="{{ url('xrds', qualified=True) }}"/>
+{% block head_discovery -%}
+<link href="{{ url(controller='blog', action='generate', format='atom', qualified=True) }}" rel="alternate" title="ATOM" type="application/atom+xml" /> 
+{%- endblock %}
+{% block head_metadata -%}
+<meta name="viewport" content="width=1000" />
+{%- endblock %}
+{% block head_links -%}
+<link rel="index" title="{{ app_globals.settings('site_name') }}" href="{{ url('main',qualified=True) }}" />
+{%- endblock %}
+{% block head_scripts -%}
+{%- endblock %}
+{% block head_styles -%}
+{%- endblock %}
+		<title>{% block title %}{{ app_globals.settings('site_name') }}{% endblock %}</title>
+	</head>
+	<body>
+		<div id="body">
+{% block header %}{% endblock %}
+{% block layout %}{% endblock %}
+{% block footer %}{% endblock %}
+		</div>
+	</body>
+</html>
+
+{% macro show_flash() %}
+{% set messages = h.flash.pop_messages() %}
+{% if messages %}
+<ul id="flash-messages">
+	{% for message in messages -%}
+	<li class="{{ message.type }}">{{ message }}</li>
+	{%- endfor %}
+</ul>
+{% endif %}
+{% endmacro %}

@@ -1,0 +1,8 @@
+{% extends "/admin/main.jinja" %}
+{% block content %}
+<div class="pictures-show">
+	<h2>{{ item.title }}</h2>
+	<img src="{{ item|upload_url }} alt="{{ item.title }}" />
+	<p>{{ item.content }} </p>
+</div>
+{% endblock %}

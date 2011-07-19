@@ -1,0 +1,254 @@
+{% from "/admin/common.jinja" import link_if_allowed, select with context %}
+{% from "/atompub/common.jinja" import set_if_exists %}
+{% from "/blog/macros.jinja" import form with context %}
+
+{% macro new_form(item, settings) %}
+{{ form(url('articles'), method="post") }}
+<fieldset>
+	<div class="field-n-label">
+	<label for="title">Title</label>
+	<input type="text" name="title" id="title" length="255" value="{{ item.title|formfield }}" />
+	</div>
+	<div class="field-n-label">
+	<label for="page_id">Page</label>
+	{{ select('page_id', item.page_id, h.page_list(), prompt="Main") }}
+	</div>
+	<div class="field-n-label">
+	<label for="can_comment">Enable Comments</label>
+	<input {{ 'checked="checked"' if item.can_comment else '' }} id="can_comment" name="can_comment" type="checkbox" value="1">
+	</div>
+	<div class="field-n-label">
+	<label for="sticky">Make Sticky</label>
+	<input {{ 'checked="checked"' if item.sticky else '' }} id="sticky" name="sticky" type="checkbox" value="1">
+	</div>
+	<div class="field-n-label">
+	<label for="content">Content</label>
+	<textarea class="jquery_ckeditor" id="content" name="content">{{ item.content|formfield }}</textarea>
+	</div>
+	<div class="field-n-label">
+	<label for="tags">Tags</label>
+	<ul id="tag-cloud">
+	</ul>
+	<input type="text" name="tags" id="tags" length="255" value="{{ item.tags | join(', ', attribute='label') }}" />
+	</div>
+	<input type="hidden" name="published" id="published" value="{{ item.published|formfield }}" />
+	<input type="button" id="preview_post" value="Preview Post"/>
+	<input type="submit" name="save" id="save" value="{{ 'Save As Draft' if item.published == None else 'Save' }}" />
+	{% if item.published == None and dict(resource='articles',action='publish') is allowed %}
+	<input type="button" name="publish" id="published_button" value="Publish"/>
+	{% endif %}
+</fieldset>
+</form>
+{% endmacro %}
+
+{% macro edit_form(item, settings) %}
+<div id="confirm-dialog"></div>
+{{ form(url('article', id=item.id), method="put") }}
+<fieldset>
+	<div class="field-n-label">
+	<label for="title">Title</label>
+	</div>
+	<div class="field-n-label">
+	<input type="text" name="title" id="title" length="255" value="{{ item.title|formfield }}" />
+	</div>
+	<div class="field-n-label">
+	<label for="page_id">Page</label>
+	{{ select('page_id', item.page_id, h.page_list(), prompt="Main") }}
+	</div>
+	<div class="field-n-label">
+	<label for="can_comment">Enable Comments</label>
+	<input {{ 'checked="checked"' if item.can_comment else '' }} id="can_comment" name="can_comment" type="checkbox" value="1">
+	</div>
+	<div class="field-n-label">
+	<label for="sticky">Make Sticky</label>
+	<input {{ 'checked="checked"' if item.sticky else '' }} id="sticky" name="sticky" type="checkbox" value="1">
+	</div>
+	<div class="field-n-label">
+	<label for="content">Content</label>
+	<textarea class="jquery_ckeditor" id="content" name="content">{{ item.content|formfield }}</textarea>
+	</div>
+	<div class="field-n-label">
+	<label for="tags">Tags</label>
+	<ul id="tag-cloud">
+	</ul>
+	<input type="text" name="tags" id="tags" length="255" value="{{ item.tags | join(', ', attribute='label') }}" />
+	</div>
+	<input type="hidden" name="published" id="published" value="{{ item.published|rfc3339|formfield }}" />
+	<input type="button" id="preview_post" value="Preview Post"/>
+	<input type="submit" name="save" id="save" value="{{ 'Save As Draft' if item.published == None else 'Save' }}" />
+	{% if item.published == None and dict(resource='articles',action='publish') is allowed %}
+	<input type="button" name="publish" id="published_button" value="Publish"/>
+	{% endif %}
+	{% if item.published != None and url(controller='admin',action='mark_reviewed') is allowed %}
+	<input type="button" name="reviewed" id="reviewed_button" value="Mark Reviewed"/>
+	{% endif %}
+</fieldset>
+</form>
+{% endmacro %}
+
+{% macro delete_form(item, settings) %}
+{{ form(url('article', id=item.id), method="delete") }}
+<fieldset>
+	<input type="submit" value="Delete" />
+</fieldset>
+</form>
+{% endmacro %}
+
+{% macro index_html(items, settings) %}
+<table>
+	<thead>
+		<tr>
+			<td class="filler-cell">&nbsp;</td>
+			<th>Subject</th>
+			<th>Date Published</th>
+			<th>Author</th>
+			<th>{{ "Reviewed By" if dict(action='see_reviewer') is allowed else "Reviewed" }}</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for item in items %}
+	<tr class="{{ loop.cycle('odd', 'even') }}">
+		<td>{{ link_if_allowed("Edit",url('edit_article', id=item.id)) }}</td>
+		<td>{{ item.title }}{{ " - Sticky" if item.sticky else "" }}</td>
+		<td>{{ "Draft" if item.published == None else item.published|localized_datetime_format('%m/%d/%Y %I:%M %p') }}</td>
+		<td>{{ item.author['name'] }}</td>
+		<td>
+			{%- if dict(action='see_reviewer') is allowed -%}
+			{{ item.reviewer.name if item.reviewer != None else "Unreviewed" }}
+			{%- else -%}
+			{{ "Reviewed" if item.reviewer != None else "Unreviewed" }}
+			{%- endif -%}
+		</td>
+	</tr>
+	{% endfor %}
+	</tbody>
+</table>
+{% endmacro %}
+
+{% macro show_html(item, settings) %}
+<div class="story-container hentry">
+	<div class="story-title entry-title">
+		<h1>
+			<a href="{{ url("story", permalink=item.permalink, qualified=True) }}" rel="bookmark">{{ item.title }}</a>
+		</h1>
+	</div>
+	<div class="story-user author">
+		by <a href="{{ url("user_feed", name=item.author['name']) }}" title="View articles by {{ item.author['name'] }}">{{ item.author['name'] }}</a>
+	</div>
+	<div class="story-date published">
+		<abbr title="{{ item.published|rfc3339 }}">
+			{{ item.published|localized_datetime_format(app_globals.settings('date_format')) }}
+		</abbr>
+	</div>
+	{% if url('edit_article', id=item.id) is allowed %}
+	<div class="story-edit">
+		<a href="{{ url('edit_article', id=item.id) }}" title="Edit Article {{ item.id }}">Edit Article</a>
+	</div>
+	{% endif %}
+	<div class="story-content entry-content">
+		{{ item.content or '' | safe }}
+	</div>
+	<div class="story-tags">
+		<h3>Tags:</h3>
+		{% if item.tags|length > 0 %}
+		<ul class="story-tags-list">
+			{% for tag in item.tags %}
+			<li class="story-tags-item">
+				<a href="{{ url("tag_feed", name=tag.id) }}" title="View articles with tag {{ tag.label }}" rel="tag">{{ tag.label }}</a>
+			</li>
+			{% endfor %}
+		</ul>
+		{% endif %}
+	</div>
+</div>
+{% endmacro %}
+
+{% macro show_json(item, settings) %}
+{{ item.to_dict()|jsonify }}
+{% endmacro %}
+
+{% macro show_atom(item, settings) %}
+<atom:entry xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+	
+	<atom:link href="{{ app_globals.settings('site_link') }}" rel="index" />
+	<atom:link href="{{ url('article', id=item.id, qualified=True) }}" rel="self" />
+	<atom:link href="{{ url('article', id=item.id, format='html', qualified=True) }}" rel="alternate" />
+	<atom:link href="{{ url('edit_article', id=item.id, qualified=True) }}" rel="edit" />
+	<atom:link href="{{ url('atom_service', qualified=True) }}" rel="service" />
+	{#
+	<atom:link href="{{ url('article_comments', article_id=item.id, qualified=True) }}" rel="replies" />
+	<atom:link href="{{ url('pinkback_service', qualified=True) }}" rel="pingback" />
+	#}
+	<atom:title>{{ item.title }}</atom:title>
+	<atom:id>{{ item.atom_id }}</atom:id>
+	<atom:author>
+		<atom:name>{{ item.author['name'] }}</atom:name>
+		{{ set_if_exists('atom:email',item.author['email']) }}
+		{{ set_if_exists('atom:uri',item.author['uri']) }}
+	</atom:author>
+	{% for contrib in item.contributors %}
+	<atom:contributor>
+		<atom:name>{{ contrib.get('name') }}</atom:name>
+		{{ set_if_exists('atom:email',contrib.get('email')) }}
+		{{ set_if_exists('atom:uri',contrib.get('uri')) }}
+	</atom:contributor>
+	{% endfor %}
+	{{ set_if_exists('atom:published',item.published|rfc3339) }}
+	<atom:updated>{{ item.updated|rfc3339 }}</atom:updated>
+	<atom:summary type="html">
+		{{ item.summary }}
+	</atom:summary>
+	<atom:content type="html">
+		{{ item.content }}
+	</atom:content>
+	{% for link in item.links %}
+		<atom:link {{link|xmlattr }} />
+	{% endfor %}
+	{{ set_if_exists('atom:rights',app_globals.settings('site_rights')) }}
+	{% for tag in item.tags %}
+	<atom:category term="{{ tag.id }}" label="{{ tag.label }}" scheme="{{ url('formatted_tag_feed', name=tag.id, format='atom', qualified=True) }}" />
+	{% endfor %}
+	
+	{#
+	{% if item.source_attrs != None %}
+		<atom:source>
+			{{ set_if_exists('atom:id',item.source_attrs.get('id',None)) }}
+			{{ set_if_exists('atom:generator',item.source_attrs.get('generator',None)) }}
+			{{ set_if_exists('atom:icon',item.source_attrs.get('icon',None)) }}
+			{{ set_if_exists('atom:rights',item.source_attrs.get('rights',None)) }}
+			{{ set_if_exists('atom:logo',item.source_attrs.get('logo',None)) }}
+			{{ set_if_exists('atom:title',item.source_attrs.get('title',None)) }}
+			{{ set_if_exists('atom:updated',item.source_attrs.get('updated',None)) }}
+			{% if item.source_attrs.get('author',None) != None %}
+			{% set s_author = item.source_attrs.get('author') %}
+			<atom:author>
+				{{ set_if_exists('atom:name',s_author.get('name',None)) }}
+				{{ set_if_exists('atom:email',s_author.get('email',None)) }}
+				{{ set_if_exists('atom:uri',s_author.get('uri',None)) }}
+			</atom:author>
+			{% endif %}
+			{% for contrib in item.source_attrs.get('contributors',[]) %}
+			<atom:contributor>
+				{{ set_if_exists('atom:name',contrib.get('name',None)) }}
+				{{ set_if_exists('atom:email',contrib.get('email',None)) }}
+				{{ set_if_exists('atom:uri',contrib.get('uri',None)) }}
+			</atom:contributor>
+			{% endfor %}
+			{% for tag in item.source_attrs.get('categories',[]) %}
+			<atom:category {{tag|xmlattr }} />
+			{% endfor %}
+			{% for link in item.source_attrs.get('links',[]) %}
+			<atom:link {{link|xmlattr }} />
+			{% endfor %}
+		</atom:source>
+	{% endif %}
+	#}
+	<dc:title>{{ item.title }}</dc:title>
+	<dc:publisher>{{ app_globals.settings('site_name') }}</dc:publisher>
+	<dc:creator>{{ item.author_name }}</dc:creator>
+	<dc:language>en</dc:language>
+	{{ set_if_exists('dc:rights',app_globals.settings('site_rights')) }}
+	<dc:date>{{ item.updated.strftime('%Y-%m-%d') }}</dc:date>
+	<dc:subject>{{ item.tags | join(', ', attribute='label') }}</dc:subject>	
+</atom:entry>
+{% endmacro %}

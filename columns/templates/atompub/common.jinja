@@ -1,0 +1,11 @@
+{% macro set_if_exists(el, value) -%}
+	{%- if value is not none -%}
+	<{{el}} {{kwargs|xmlattr}}>{{value}}</{{el}}>
+	{%- endif -%}
+{%- endmacro %}
+
+{% macro link_if_exists(el, value) -%}
+	{%- if value is not none -%}
+	<{{el}} href="{{value}}" {{kwargs|xmlattr}} />
+	{%- endif -%}
+{%- endmacro %}

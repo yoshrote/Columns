@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding='utf-8'?>
+<service xmlns="http://www.w3.org/2007/app" xmlns:atom="http://www.w3.org/2005/Atom">
+	<workspace>
+		<atom:title>{{ app_globals.setting('site_title') }}</atom:title>
+		<collection href="{{ url('formatted_articles', format='atom') }}" >
+			<atom:title>Articles</atom:title>
+			<accept>application/atom+xml;type=entry</accept>
+			<categories href="{{ url('formatted_users', format='atom') }}" />
+			<categories href="{{ url('formatted_tags', format='atom') }}" />
+		</collection>
+		<collection href="{{ url('formatted_pictures', format='atom') }}" >
+			<atom:title>Pictures</atom:title>
+			<accept>image/png</accept>
+			<accept>image/jpeg</accept>
+			<accept>image/gif</accept>
+		</collection>
+	</workspace>
+</service>

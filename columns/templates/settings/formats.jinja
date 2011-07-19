@@ -1,0 +1,75 @@
+{% from "/admin/common.jinja" import link_if_allowed with context %}
+{% from "/blog/macros.jinja" import form with context %}
+{% macro new_form(item, settings) %}
+{{ form(url('settings'), method="post") }}
+<fieldset>
+	<div class="field-n-label">
+	<label for="module">Module</label>
+	<input type="text" name="module" id="module" length="255" value="{{ item.module }}" />
+	</div>
+	{% for k,v in item.values.items() %}
+	<div class="field-n-label">
+	<label for="values.{{k}}">{{ k.replace('_',' ').title() }}</label>
+	<input type="text" name="values.{{k}}" id="values{{k}}" value="{{ v }}" length="255" />
+	</div>
+	{% endfor %}
+	<input type="submit" name="save" id="save" value="Save" />
+</fieldset>
+</form>
+{% endmacro %}
+
+{% macro edit_form(item, settings) %}
+{{ form(url('setting', id=item.module), method="put") }}
+<fieldset>
+	{% for k,v in item.values.items() %}
+	<div class="field-n-label">
+	<label for="values.{{k}}">{{ k.replace('_',' ').title() }}</label>
+	<input type="text" name="values.{{k}}" id="values{{k}}" value="{{ v }}" length="255" />
+	</div>
+	{% endfor %}
+	<input type="submit" name="save" id="save" value="Save" />
+</fieldset>
+</form>
+{% endmacro %}
+
+{% macro delete_form(item, settings) %}
+{{ form(url('setting', id=item.module), method="delete") }}
+<fieldset>
+	<input type="submit" value="Delete" />
+</fieldset>
+</form>
+{% endmacro %}
+
+{% macro index_html(items, settings) %}
+<table>
+	<thead>
+		<tr>
+			<td class="filler-cell">&nbsp;</td>
+			<th>Module</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for item in items %}
+	<tr class="{{ loop.cycle('odd', 'even') }}">
+		<td>
+			{{ link_if_allowed("Edit",url('edit_setting', id=item.module)) }}
+		</td>
+		<td>{{ item.module }}</td>
+	</tr>
+	{% endfor %}
+	</tbody>
+</table>
+{% endmacro %}
+
+{% macro show_json(item, settings) %}
+{{ item.to_dict()|jsonify }}
+{% endmacro %}
+
+{% macro show_html(item, settings) %}
+<table>
+	<caption>{{ item.module }} Settings</caption>
+	{% for k,v in item.values.items() %}
+	<tr><td>{{ k }}</td><td>{{ v }}</td></tr>
+	{% endfor %}
+</table>
+{% endmacro %}

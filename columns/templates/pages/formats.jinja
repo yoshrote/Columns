@@ -1,0 +1,132 @@
+{% from "/admin/common.jinja" import link_if_allowed, select with context %}
+{% from "/blog/macros.jinja" import form with context %}
+{% macro new_form(item, settings) %}
+{{ form(url('pages'), method='post') }}
+<fieldset>
+	<div class="field-n-label">
+	<label for="template">Page Template</label>
+	{{ select('template', item.template or '/blog/blank', h.template_list()) }}
+	</div>
+	<div class="field-n-label">
+	<label for="title">Page Title</label>
+	<input type="text" name="title" id="title" length="255" value="{{ item.title|formfield }}" />
+	</div>
+	<div class="field-n-label">
+	<label for="visible">Is Visible</label>
+	<input {{ 'checked="checked"' if item.visible else '' }} id="visible" name="visible" type="checkbox" value="1">
+	</div>
+	<div class="field-n-label">
+	<label for="in_menu">Show Page in Menu</label>
+	<input {{ 'checked="checked"' if item.in_menu else '' }} id="in_menu" name="in_menu" type="checkbox" value="1">
+	</div>
+	<div class="field-n-label">
+	<label for="can_post">Enable Posts</label>
+	<input {{ 'checked="checked"' if item.can_post else '' }} id="can_post" name="can_post" type="checkbox" value="1">
+	</div>
+	<div class="field-n-label">
+	<label for="in_main">Show Posts in Main Stream</label>
+	<input {{ 'checked="checked"' if item.in_main else '' }} id="in_main" name="in_main" type="checkbox" value="1">
+	</div>
+	<div class="field-n-label">
+	<label for="stream_comment_style">Stream Comment Style</label>
+	{{ select('stream_comment_style', item.stream_comment_style, item.styles_list()) }}
+	</div>
+	<div class="field-n-label">
+	<label for="story_comment_style">Story Comment Style</label>
+	{{ select('story_comment_style', item.story_comment_style, item.styles_list()) }}
+	</div>
+	<div class="field-n-label">
+	<label for="content">Content</label>
+	<textarea class="jquery_ckeditor" id="content" name="content">{{ item.content|formfield }}</textarea>
+	</div>
+	<input type="submit" name="save" id="save" value="Save" />
+</fieldset>
+</form>
+{% endmacro %}
+
+{% macro edit_form(item, settings) %}
+{{ form(url('page', id=item.id), method='put') }}
+<fieldset>
+	<div class="field-n-label">
+	<label for="template">Page Template</label>
+	{{ select('template', item.template or '/blog/blank', h.template_list()) }}
+	</div>
+	<div class="field-n-label">
+	<label for="title">Page Title</label>
+	<input type="text" name="title" id="title" length="255" value="{{ item.title|formfield }}" />
+	</div>
+	<div class="field-n-label">
+	<label for="visible">Is Visible</label>
+	<input {{ 'checked="checked"' if item.visible else '' }} id="visible" name="visible" type="checkbox" value="1">
+	</div>
+	<div class="field-n-label">
+	<label for="in_menu">Show Page in Menu</label>
+	<input {{ 'checked="checked"' if item.in_menu else '' }} id="in_menu" name="in_menu" type="checkbox" value="1">
+	</div>
+	<div class="field-n-label">
+	<label for="can_post">Enable Posts</label>
+	<input {{ 'checked="checked"' if item.can_post else '' }} id="can_post" name="can_post" type="checkbox" value="1">
+	</div>
+	<div class="field-n-label">
+	<label for="in_main">Show Posts in Main Stream</label>
+	<input {{ 'checked="checked"' if item.in_main else '' }} id="in_main" name="in_main" type="checkbox" value="1">
+	</div>
+	<div class="field-n-label">
+	<label for="stream_comment_style">Stream Comment Style</label>
+	{{ select('stream_comment_style', item.stream_comment_style, item.styles_list()) }}
+	</div>
+	<div class="field-n-label">
+	<label for="story_comment_style">Story Comment Style</label>
+	{{ select('story_comment_style', item.story_comment_style, item.styles_list()) }}
+	</div>
+	<div class="field-n-label">
+	<label for="content">Content</label>
+	<textarea class="jquery_ckeditor" id="content" name="content">{{ item.content|formfield }}</textarea>
+	</div>
+	<input type="submit" name="save" id="save" value="Save" />
+</fieldset>
+</form>
+{% endmacro %}
+
+{% macro delete_form(item, settings) %}
+{{ form(url('page', id=item.id), method="delete") }}
+<fieldset>
+	<input type="submit" value="Delete" />
+</fieldset>
+</form>
+{% endmacro %}
+
+{% macro index_html(items, settings) %}
+<table>
+	<thead>
+		<tr>
+			<td class="filler-cell">&nbsp;</td>
+			<th>Name</th>
+			<th>Visible</th>
+			<th>In Main Feed</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for item in items %}
+	<tr class="{{ loop.cycle('odd', 'even') }}">
+		<td>
+			{{ link_if_allowed("Edit",url('edit_page', id=item.id)) }}
+		</td>
+		<td>{{ item.title }}</td>
+		<td>{{ 'True' if item.visible else 'False' }}</td>
+		<td>{{ 'True' if item.in_main else 'False' }}</td>
+	</tr>
+	{% endfor %}
+	</tbody>
+</table>
+{% endmacro %}
+
+{% macro show_html(item, settings) %}
+{% endmacro %}
+
+{% macro show_json(item, settings) %}
+{{ item.to_dict()|jsonify }}
+{% endmacro %}
+
+{% macro show_atom(item, settings) %}
+{% endmacro %}
