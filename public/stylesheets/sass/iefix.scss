@@ -1,0 +1,91 @@
+@charset "UTF-8";
+$link_color: #009600;
+$matte_color: #191919;
+$background_color: #121315;
+$outline_color: rgb(204,204,204);
+$sidebar_width: 218px;
+$sidebar_margin: 10px;
+$content_width: 695px;
+$base_media_url:'http://media.nerdblerp.com';
+
+@mixin hover_button($height, $width, $image, $adjust){
+	display:inline-block;
+	height:$height;
+	width:$width;
+	background:{
+		image:url($image);
+		repeat:no-repeat;
+	}
+	&:hover{
+		background-position:0px $adjust;
+	}
+}
+
+@mixin hide_text{
+	$approximate_em_value: 12px / 1em;
+	$wider_than_any_screen: -9999em;
+	text-indent: $wider_than_any_screen * $approximate_em_value;
+	overflow: hidden;
+	text-align: left;
+}
+
+html{
+	color:white;
+	font-family:'Lucida Grande', Arial, Helvetica, sans-serif;
+	background:{
+		position:center top;
+		image:url('#{$base_media_url}/images/bg/Header.gif');
+		repeat:no-repeat;
+		color:black;
+	}
+}
+body{
+	height:100%;
+	background:{
+		image:url('#{$base_media_url}/images/bg/Footer_BG.jpg');
+		position:center bottom;
+		repeat:no-repeat;
+	}
+}
+
+.header-stuff{
+	.login-button,.logout-button{
+		@include hide_text;
+		border-right:none;
+		border-bottom:none;
+		background:none;
+		background-color:inherit;
+	}
+	#login-button{
+		@include hover_button(29px, 83px, '#{$base_media_url}/images/login/login.png', -29px);
+	}
+	#logout-button{
+		@include hover_button(29px, 83px, '#{$base_media_url}/images/login/logout.png', -29px);
+	}
+	.search-form{
+		border-right:none;
+		border-bottom:none;
+		height:39px;
+		text-align:left;
+		padding-top:15px;
+		padding-left:0;
+		line-height:1em;
+		background:{
+			color:inherit;
+			image:url('#{$base_media_url}/images/Search_Box_Border.png');
+			repeat:no-repeat;
+			position:center center;
+		}
+		table{
+			margin-left:10px;
+			margin-top:1px;
+		}
+	}
+}
+
+#footnav{
+	background:{
+		image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyBpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBXaW5kb3dzIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkZCMzQzMkE0QTBGQzExREY4NTMxQTQ5QzQyN0JDQzRFIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkZCMzQzMkE1QTBGQzExREY4NTMxQTQ5QzQyN0JDQzRFIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6RkIzNDMyQTJBMEZDMTFERjg1MzFBNDlDNDI3QkNDNEUiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6RkIzNDMyQTNBMEZDMTFERjg1MzFBNDlDNDI3QkNDNEUiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz5qUGXAAAAAD0lEQVR42mJgYGDwBQgwAABSAE5RZV5PAAAAAElFTkSuQmCC');
+		repeat:repeat;
+	}
+}

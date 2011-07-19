@@ -55,6 +55,23 @@
 {% endfor %}
 {%- endblock %}
 
+{% block head_styles -%}
+{{ super() }}
+<link href="{{ url("static", path="/stylesheets/disqus.css") }}" media="screen" rel="stylesheet" type="text/css" /> 
+{% for k,v in item.links.items() %}
+<link rel="{{k}}" href="{{v}}"/>
+{% endfor %}
+{%- endblock %}
+
+{% block jquery_code %}
+{{ super() }}
+disqus_shortname = 'nerdblerp';
+disqus_identifier = 'nerdblerp_{{ item.permalink }}';
+disqus_url = '{{ url('story', permalink=item.permalink, qualified=True) }}';
+disqus_developer = 1;
+$.getScript('http://nerdblerp.disqus.com/embed.js');
+{% endblock %}
+
 {% block head_metadata -%}
 	{{ super() }}
 	<meta name="DC.publisher" content="{{ app_globals.settings('site_name') }}" />

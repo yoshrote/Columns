@@ -86,33 +86,36 @@ Share this story on:
 <div class="comments-container">
 {% set article_subject = "article %s"%article.id %}
 {% if format == 'none' %}
+	{#
 	<a href="{{ ''.join([url("story", permalink=article.permalink),'#comments']) }}" title="view comments for {{ article_subject }}">View Comments</a>
 	|
 	<a href="{{ url('new_comment', parent_id=article.id) }}" class="comment-link" title="write comment for {{ article_subject }}">Leave a Comment...</a>
+	#}
+	<a href="{{ ''.join([url("story", permalink=article.permalink),'#disqus_thread']) }}" data-disqus-identifier="nerdblerp_{{ article.permalink }}">First article</a>
 {% elif format == 'summary' %}
+	{#
 	<a href="{{ ''.join([url("story", permalink=article.permalink),'#comments']) }}" title="view comments for {{ article_subject }}">{{ app_globals.count_comments(article) }} Comments</a>
 	|
 	<a href="{{ url('new_comment', parent_id=article.id) }}" class="comment-link" title="write comment for {{ article_subject }}">Leave a Comment...</a>
+	#}
+	<a href="{{ ''.join([url("story", permalink=article.permalink),'#disqus_thread']) }}" data-disqus-identifier="nerdblerp_{{ article.permalink }}">First article</a>
 {% else %}
+	{#
 	<a href="{{ url('new_comment', parent_id=article.id) }}" class="comment-link" title="write comment for {{ article_subject }}">Leave a comment</a>
 	{% if app_globals.count_comments(article) > 0 %}
 	<ul class="comments-list">
-		{#% if reverse_comments == False %#}
 			{% for comment in article.comments.all() %}
 		<li class="comment-list-item">
 			{{ show_single_comment(comment) }}
 		</li>
 			{% endfor %}
-		{#% else %}
-			{% for comment in article.comments.all()[::-1] %}
-		<li class="comment-list-item">
-			{{ show_single_comment(comment) }}
-		</li>
-			{% endfor %}
-		{% endif %#}
 	</ul>
 	<a href="{{ url('new_comment', parent_id=article.id) }}" class="comment-link" title="write comment for {{ article_subject }}">Leave a comment</a>
 	{% endif %}
+	#}
+<div id="disqus_thread"></div>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>	
 {% endif %}
 </div>
 {% endmacro %}

@@ -1,0 +1,70 @@
+@charset "UTF-8";
+/* CSS Document */
+/* NB full information and explanantion at http://disqus.com/docs/css/ */
+/* Added by ack! from http://wiki.disqus.net/CustomCSS */
+/* Everything Disqus on your page is contained within this. */
+#disqus_thread {
+  border: #cccccc solid 1px;
+  background-color: #121315;
+  color: inherit;
+  /*background-color: #000000;
+  	color: #ffffff; 
+  	border-style: solid;
+  	border-color: #cccccc;*/
+  padding: 20px; }
+
+/*The header at the top of posts.*/
+.dsq-comment-header {
+  background-color: #ffffff;
+  font-family: "verdana",sans-serif;
+  font-size: 12px;
+  height: 50px; }
+
+/*The comments.*/
+.dsq-comment-message {
+  font-family: "verdana",sans-serif;
+  font-size: 11px;
+  color: #cccccc; }
+
+/*The box where a post is typed into.*/
+textarea {
+  background-image: none;
+  background-repeat: repeat;
+  border: #00A8D6 2px solid;
+  /* light blue border */ }
+
+/*"Add New Comment" and "# Comments" are enclosed in h3 tags.*/
+/*The entire comment thread list.*/
+/*A single comment in the thread.*/
+.dsq-comment {
+  border: #00A8D6 2px solid;
+  /* light blue border */
+  margin-botom: 15px; }
+
+/*The avatar image for the registered.*/
+/*The message body of a single comment post.*/
+/*The footer contains the link to "reply."*/
+/* The form elements (Name, Email, Website). */
+input.form-text {
+  font-size: 100%; }
+
+/* The submit button "Post". */
+input.submit {
+  background-color: #ffffff; }
+
+/* The main wrapper for the comment system. */
+/* The toggle button for the thread options. */
+#dsq-options-toggle {
+  /* display: none; */ }
+
+/* The links within the thread Options */
+#dsq-extra-links {
+  /* display: none; */ }
+
+/* The comment rating arrows for posts. */
+/* This is the meta information about the post (time stamp and points). */
+/* The message body of a single comment post.
+.dsq-comment-body {
+}
+
+/* This contains and determines the style for the pagination links. */
